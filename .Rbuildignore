@@ -1,2 +1,5 @@
+^analysis$
+^analysis*$
+^data-raw$
 ^guppies\.Rproj$
 ^\.Rproj\.user$

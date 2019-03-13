@@ -1,9 +1,14 @@
 Package: guppies
 Title: How the Guppy Got his Spots
-Version: 0.0.0.9000
+Version: 0.0.0.9002
 Authors@R: person("Rose", "McKeon", email = "rosemckeon@gmail.com", role = c("aut", "cre"))
 Description: Analysis of simulated guppy experiments which examine factors that influence male spot brightness.
 Depends: R (>= 3.4.4)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Imports:
+    tidyverse,
+    ggplot2,
+    broom,
+    nlstools

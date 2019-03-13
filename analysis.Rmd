@@ -1,0 +1,127 @@
+---
+title: How the guppy got his spots.
+author: 
+- name: '2417024'
+  num: 
+runninghead: How the guppy got his spots.
+abstract: 'Control of male guppy spot brightness'
+keywords: Guppy; Guppies; Predation; Dimorphism;
+bibliography: analysis/assets/example.bib
+bibliographystyle: analysis/assets/crumpetBES.bst
+output: 
+  pdf_document:
+    template: analysis/assets/crumpet.tex
+    citation_package: natbib
+    keep_tex: no
+    fig_caption: yes
+    fig_width: 5
+    fig_height: 5
+documentclass: crumpet
+classoption:
+- Review
+- times
+- doublespace
+longtable: yes
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+source("analysis/setup.R")
+library(kableExtra)
+roses_set_ggtheme()
+```
+
+```{R control, dev='cairo_pdf', echo=FALSE, fig.cap="\\label{fig:control}Increase in male guppy spot brightness over time when populations were not exposed to predation (lifespan around 120 days). Each data point represents the spot brightness of one male guppy (points are jittered around both x and y values). The curve shown has been fitted using asymptotic growth equation (y = a - b * exp(-c*x)) from all substrates and feeding levels (no differences between these factors were observed)."}
+source("analysis/control.R")
+plot_control
+```
+
+# How to cite
+
+## Figures 
+
+Cite figures like this: figure \ref{fig:example}. See the chunk options for how to add //labels to fig.cap in order for this to work.
+
+## References
+
+Cite references like this: [@Chaib2017] to put them inside round brackets, or do Author says [-@Chaib2017] to just put the year. The references will appear at the end of the document automatically containing only those from the bib file that are actually cited. For more advanced citation techniques, and how to add **nocite** references for a bibliography see the [RMarkdown citation guidelines](https://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html).
+
+
+## Testing
+
+For testing thet citation style references are included for:
+
++ A book section (two authors): [@VanMourik1990]
+
++ A book (one author): [@Wulf2015]
+
++ A book (three authors): [@Gurevitch2006]
+
++ A book (many authors): [@Lodish2016]
+
++ A journal article (many authors): [@Preston2003]
+
++ A journal article (one author): [@Geist1966]
+
++ A webpage (one author): [@Chaib2017]
+
++ Multiple citations: [@Wulf2015; @Preston2003]
+
+# Example Figures
+
+```{R plot1, echo=FALSE, fig.cap="\\label{fig:example}example plot showing lack of self control regarding desire for crumpets."}
+roses_par(
+  cex.axis = .75,
+  cex.lab = .6,
+  tck = -.02,
+  mgp = c(3, .5, 0),
+  bg = alpha(1, 0.05)
+)
+plot(
+  1:10, seq(2,20,2),
+  type = "n",
+  xaxt = "n",
+  xlab = "",
+  ylab = ""
+)
+rect(
+  par("usr")[1], 
+  par("usr")[3], 
+  par("usr")[2], 
+  par("usr")[4], 
+  col = "white"
+)
+points(
+  1:10, seq(2,20,2),
+  pch = 18,
+  col = 2
+)
+title(xlab="How much I want crumpets", line = 1.25)
+title(ylab="How many crumpets I eat", line = 1.75)
+axis(1, mgp = c(3, .2, 0))
+```
+
+
+Use R blocks to produce tables and plots as usual (see table \ref{tab:example} and figure \ref{fig:example}).
+
+
+```{R echo=FALSE}
+kable(
+  data.frame(
+    "wanted" = 1:10,
+    "eaten" = seq(2,20,2)
+  ), 
+  col.names = c(
+    "Desire for crumpets",
+    "Crumpets eaten"
+  ),
+  caption = "\\label{tab:example}example table showing data for crumpet plot.",
+  booktabs = T
+) %>% kable_styling(
+  latex_options = c("striped"),
+  full_width = T,
+  font_size = 10
+) %>%
+column_spec(1, width = "8cm")
+```
+
+# References
