@@ -5,12 +5,6 @@ guppies <- read.csv("data-raw/guppies.csv")
 guppies$Substrate <- factor(guppies$Substrate)
 levels(guppies$Substrate) <- c("Sand","Vegetation","Mud")
 
-# re-order predators for better plotting
-levels(guppies$Predator)[levels(guppies$Predator)=="NULL"] <- "None"
-guppies$Predator <- fct_relevel(
-  guppies$Predator, "None", "R.hartii"
-)
-
 # remove redundant extra experiments
 # first fill in blanks
 guppies <- guppies %>% mutate(
@@ -29,13 +23,13 @@ guppies <- guppies %>% mutate(
 guppies_extra <- guppies %>%
   filter(
     Additional.R.hartii == 5 |
-    Starting.food == 0
+      Starting.food == 0
   )
 # And remove them from the main data object
 guppies <- guppies %>%
   filter(
     Additional.R.hartii == 0 &
-    Starting.food == 51
+      Starting.food == 51
   ) %>%
   select(
     Spot.brightness,
@@ -44,6 +38,32 @@ guppies <- guppies %>%
     Predator,
     Predator.number
   )
+
+# Refactor Predator column so we don't have aliases to cause multicolinearity. Now all the predation "None" rows will be assigned to a predator treatment and only predator number 0 will define them.
+# split the dataset
+no_predation <- guppies %>%
+  filter(
+    Predator == "NULL"
+  )
+predation <- guppies %>%
+  filter(
+    Predator != "NULL"
+  )
+# dish out the None's evenly to other factors
+no_predation$Predator <- factor(rep(
+  c("A.pulchens", "R.hartii", "C.punctata"),
+  length.out = nrow(no_predation))
+)
+# get rid of redundant NULL factor
+predation$Predator <- factor(predation$Predator)
+# bind back together
+guppies <- bind_rows(
+  predation, no_predation
+)
+# re-order so R.hartii (with least effect) goes first
+guppies$Predator <- fct_relevel(
+  guppies$Predator, "R.hartii"
+)
 
 # convert data to frequency counts
 # Spot brightnesses recoded on a sepcific day under specific conditions grouped and counted.This groups the replicates if the days recorded on happenend to be the same. OK as all populations independent of each other.
