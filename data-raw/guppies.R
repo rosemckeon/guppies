@@ -1,5 +1,6 @@
 # read in data from guppies.csv
 guppies <- read.csv("data-raw/guppies.csv")
+guppies_wild <- read.csv("data-raw/guppies-wild.csv")
 
 # Define substrate factors
 guppies$Substrate <- factor(guppies$Substrate)
@@ -81,5 +82,6 @@ guppy_counts <- guppies %>%
 
 # generate rda file
 usethis::use_data(guppies, overwrite = T)
+usethis::use_data(guppies_wild, overwrite = T)
 usethis::use_data(guppies_extra, overwrite = T)
 usethis::use_data(guppy_counts, overwrite = T)
