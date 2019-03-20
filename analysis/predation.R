@@ -156,56 +156,6 @@ boxplot_predation_substrate <- ggplot(
   colour = 1
 )
 
-
-
-## older stuff --------------------------
-
-# # fit the growth curve for R.hartii
-# # looks very similar to control
-# fit_R.hartii <- nls(
-#   Spot.brightness ~ a - b*exp(-c*Day),
-#   data = filter(predation, Predator == "R.hartii"),
-#   start = list(
-#     # asymptotic val of function (plataeu)
-#     a = 20,
-#     # a - intercept at 0
-#     b = 10,
-#     # steep part of curve
-#     # -log((a-y)/b)/x
-#     c = -log((20-15)/10)/250
-#   )
-# )
-# # fit linear regression for A.pulchens
-# # diagnostics look ok
-# # F-tests show we need to keep interaction in model
-# fit_A.pulchens <- lm(
-#   Spot.brightness ~ Day*Substrate,
-#   data = filter(predation, Predator == "A.pulchens")
-# )
-# fit_A.pulchens2 <- update(fit_A.pulchens, ~. - Day:Substrate)
-# # Perhaps slight Assymp / Sigmoidal curve would fit better
-# # Sigmoidal is best (tolerance lower)
-# fit_A.pulchens_curve <- nls(
-#   Spot.brightness ~ SSasymp(Day, a, b, c),
-#   data = filter(predation, Predator == "A.pulchens")
-# )
-# fit_A.pulchens_curve2 <- nls(
-#   Spot.brightness ~ SSlogis(Day, a, b, c),
-#   data = filter(predation, Predator == "A.pulchens")
-# )
-#
-#
-# # fit linear regression for C.punctata
-# # diagnostics look ok
-# # F-tests show we need to keep interaction in model
-# # It doesn't have great R2 but nls won't fit a curve
-# fit_C.punctata <- lm(
-#   Spot.brightness ~ Day*Substrate,
-#   data = filter(predation, Predator == "C.punctata")
-# )
-# fit_C.punctata2 <- update(fit_C.punctata, ~. - Day:Substrate)
-# does geom_smooth lm include interaction????
-
 # plot
 plot_predation_time <- ggplot(
     predation,
@@ -244,40 +194,3 @@ plot_predation_time <- ggplot(
   ) + scale_x_continuous(
     breaks = c(0, 750, 1500)
   )
-
-# # let's see the difference between the end points to
-# # make the effect size clear
-# predation_end <- filter(predation, Day > 1400)
-#
-# # boxplot
-# boxplot_predation <- ggplot(
-#   predation_end,
-#   aes(
-#     y = Spot.brightness,
-#     x = Substrate,
-#     fill = Substrate,
-#     colour = Substrate
-#   )
-# ) + geom_jitter(
-#   pch = guppies::roses_unicode("dot_filled"),
-#   width = .1,
-#   height = .25,
-#   alpha = .5
-# ) + geom_boxplot(
-#   colour = "black",
-#   position = position_nudge(x = +0.3),
-#   width = .3,
-#   outlier.colour = NA
-# ) + facet_wrap(
-#   ~ Predator
-# ) + ylim(
-#   0, 21
-# ) + scale_x_discrete(
-#   expand = expand_scale(add = c(.3, 0.7))
-# ) + scale_fill_manual(
-#   values = brewer.pal(4, "Spectral")[2:4]
-# ) + ylab(
-#   "Male spot brightness"
-# ) + theme(
-#   legend.position = "none"
-# )
