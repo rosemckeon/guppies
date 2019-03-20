@@ -77,7 +77,7 @@ predictions1 <- data.frame(
 predictions2 <- predict(
   fit_density,
   newdata = list(
-    Predator = rep("A.pulchens", length(density)),
+    Predator = rep("A.pulcher", length(density)),
     Predator.number = density
   ),
   se = T
@@ -87,7 +87,7 @@ predictions2 <- data.frame(
   Spot.brightness = predictions2$fit,
   Upper = predictions2$fit + 1.96*predictions2$se.fit,
   Lower = predictions2$fit - 1.96*predictions2$se.fit,
-  Predator = rep("A.pulchens", length(density))
+  Predator = rep("A.pulcher", length(density))
 )
 
 # predict response for species 3

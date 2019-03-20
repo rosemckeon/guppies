@@ -9,8 +9,9 @@ library(nlstools)
 library(guppies)
 library(Hmisc)
 # set plot defaults
-roses_set_ggtheme()
+guppies::roses_set_ggtheme()
 # pull in objects
+data("guppies")
 source("analysis/wild.R")
 source("analysis/control.R")
 source("analysis/predation.R")
