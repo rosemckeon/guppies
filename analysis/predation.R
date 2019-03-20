@@ -8,35 +8,75 @@ predation_end <- guppies %>%
     Predator.number > 0
   )
 
+# add in the control as another factor to test by anova
+predation_control <- control_end
+
+predation_control$Predator <- rep(
+  factor("None"), nrow(predation_control)
+)
+
+predation_end <- bind_rows(
+  predation_end,
+  predation_control
+)
+
+predation_end$Predator <- fct_relevel(
+  predation_end$Predator, "None", "R.hartii"
+)
+
+predation_end$Predator <- factor(predation_end$Predator)
+
+# get predation over time
 predation <- guppies %>%
   filter(
     Predator.number > 0
   )
 
-boxplot_predation <- ggplot(
+# N for all groups at end
+predation_N <- predation_end %>%
+  group_by(Predator) %>% tally()
+
+plot_predation <- ggplot(
   predation_end,
   aes(
     y = Spot.brightness,
     x = Predator,
-    fill = Predator,
-    colour = Predator
+    fill = Spot.brightness,
+    colour = Spot.brightness
   )
+) + geom_hline(
+  aes(
+    yintercept = control_mean
+  ),
+  linetype = "solid",
+  size = 2,
+  alpha = .1,
+  colour = 1
+) + geom_violin(
+  trim = F,
+  scale = "count",
+  width = .5,
+  colour = alpha(1, .25),
+  linetype = "dotted"
 ) + geom_jitter(
   pch = guppies::roses_unicode("dot_filled"),
-  width = .1,
+  width = .05,
   height = .25,
   alpha = .5
-) + geom_boxplot(
-  colour = "black",
-  position = position_nudge(x = +0.3),
-  width = .3,
-  outlier.colour = NA
-) + scale_fill_manual(
-  values = brewer.pal(5, "PuBu")[3:5]
-) + scale_colour_manual(
-  values = brewer.pal(5, "PuBu")[3:5]
-) + scale_x_discrete(
-  expand = expand_scale(add = c(.3, 0.7))
+) + stat_summary(
+  fun.data = mean_cl_normal,
+  color = 1,
+  geom = "errorbar",
+  width = .25,
+  position = position_nudge(x = .25)
+  # ) + scale_x_discrete(
+  #   expand = expand_scale(add = c(.3, 0.7))
+) + stat_summary(
+  fun.data = mean_cl_normal,
+  color = 1,
+  geom = "pointrange",
+  size = .25,
+  position = position_nudge(x = .25)
 ) + ylab(
   "Male spot brightness"
 ) + theme(
@@ -44,19 +84,38 @@ boxplot_predation <- ggplot(
   axis.ticks.x = element_blank(),
   axis.text.x=element_blank()
 ) + ylim(
-  0, 21
+  -1, 23
 ) + facet_grid(
   ~Predator,
   space = "free",
   scales = "free"
-) + geom_hline(
-  aes(
-    yintercept = control_mean
-  ),
-  linetype = "dotted",
-  alpha = .5,
-  colour = 1
 )
+
+# stastical significance?
+fit_predation <- lm(
+  Spot.brightness ~ Predator, data = predation_end
+)
+#summary(fit_predation)
+#summary.aov(fit_predation)
+
+predation_stats <- data.frame(
+  Predator = c(
+    "None",
+    "\\textit{Rivulus hartii}",
+    "\\textit{Aequidens pulcher}",
+    "\\textit{Crenicichla punctata}"
+  ),
+  B = tidy(summary(fit_predation)) %>% pull(estimate),
+  Lower = as.data.frame(confint(fit_predation)) %>% pull(1),
+  Upper = as.data.frame(confint(fit_predation)) %>% pull(2),
+  t = tidy(summary(fit_predation)) %>% pull(statistic),
+  P = c(
+    "\\textless\\hspace{1em}0.001",
+    "\\textgreater\\hspace{1em}0.05",
+    rep("\\textless\\hspace{1em}0.001", 2)
+  )
+)
+
 
 boxplot_predation_substrate <- ggplot(
   predation_end,
@@ -98,52 +157,53 @@ boxplot_predation_substrate <- ggplot(
 )
 
 
+
 ## older stuff --------------------------
 
-# fit the growth curve for R.hartii
-# looks very similar to control
-fit_R.hartii <- nls(
-  Spot.brightness ~ a - b*exp(-c*Day),
-  data = filter(predation, Predator == "R.hartii"),
-  start = list(
-    # asymptotic val of function (plataeu)
-    a = 20,
-    # a - intercept at 0
-    b = 10,
-    # steep part of curve
-    # -log((a-y)/b)/x
-    c = -log((20-15)/10)/250
-  )
-)
-# fit linear regression for A.pulchens
-# diagnostics look ok
-# F-tests show we need to keep interaction in model
-fit_A.pulchens <- lm(
-  Spot.brightness ~ Day*Substrate,
-  data = filter(predation, Predator == "A.pulchens")
-)
-fit_A.pulchens2 <- update(fit_A.pulchens, ~. - Day:Substrate)
-# Perhaps slight Assymp / Sigmoidal curve would fit better
-# Sigmoidal is best (tolerance lower)
-fit_A.pulchens_curve <- nls(
-  Spot.brightness ~ SSasymp(Day, a, b, c),
-  data = filter(predation, Predator == "A.pulchens")
-)
-fit_A.pulchens_curve2 <- nls(
-  Spot.brightness ~ SSlogis(Day, a, b, c),
-  data = filter(predation, Predator == "A.pulchens")
-)
-
-
-# fit linear regression for C.punctata
-# diagnostics look ok
-# F-tests show we need to keep interaction in model
-# It doesn't have great R2 but nls won't fit a curve
-fit_C.punctata <- lm(
-  Spot.brightness ~ Day*Substrate,
-  data = filter(predation, Predator == "C.punctata")
-)
-fit_C.punctata2 <- update(fit_C.punctata, ~. - Day:Substrate)
+# # fit the growth curve for R.hartii
+# # looks very similar to control
+# fit_R.hartii <- nls(
+#   Spot.brightness ~ a - b*exp(-c*Day),
+#   data = filter(predation, Predator == "R.hartii"),
+#   start = list(
+#     # asymptotic val of function (plataeu)
+#     a = 20,
+#     # a - intercept at 0
+#     b = 10,
+#     # steep part of curve
+#     # -log((a-y)/b)/x
+#     c = -log((20-15)/10)/250
+#   )
+# )
+# # fit linear regression for A.pulchens
+# # diagnostics look ok
+# # F-tests show we need to keep interaction in model
+# fit_A.pulchens <- lm(
+#   Spot.brightness ~ Day*Substrate,
+#   data = filter(predation, Predator == "A.pulchens")
+# )
+# fit_A.pulchens2 <- update(fit_A.pulchens, ~. - Day:Substrate)
+# # Perhaps slight Assymp / Sigmoidal curve would fit better
+# # Sigmoidal is best (tolerance lower)
+# fit_A.pulchens_curve <- nls(
+#   Spot.brightness ~ SSasymp(Day, a, b, c),
+#   data = filter(predation, Predator == "A.pulchens")
+# )
+# fit_A.pulchens_curve2 <- nls(
+#   Spot.brightness ~ SSlogis(Day, a, b, c),
+#   data = filter(predation, Predator == "A.pulchens")
+# )
+#
+#
+# # fit linear regression for C.punctata
+# # diagnostics look ok
+# # F-tests show we need to keep interaction in model
+# # It doesn't have great R2 but nls won't fit a curve
+# fit_C.punctata <- lm(
+#   Spot.brightness ~ Day*Substrate,
+#   data = filter(predation, Predator == "C.punctata")
+# )
+# fit_C.punctata2 <- update(fit_C.punctata, ~. - Day:Substrate)
 # does geom_smooth lm include interaction????
 
 # plot
