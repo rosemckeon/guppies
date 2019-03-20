@@ -6,6 +6,10 @@ guppies_wild <- read.csv("data-raw/guppies-wild.csv")
 guppies$Substrate <- factor(guppies$Substrate)
 levels(guppies$Substrate) <- c("Sand","Vegetation","Mud")
 
+# fix spelling
+#levels(guppies$Predator)
+guppies$Predator <- recode_factor(guppies$Predator, "A.pulchens" = "A.pulcher")
+
 # remove redundant extra experiments
 # first fill in blanks
 guppies <- guppies %>% mutate(
@@ -52,7 +56,7 @@ predation <- guppies %>%
   )
 # dish out the None's evenly to other factors
 no_predation$Predator <- factor(rep(
-  c("A.pulchens", "R.hartii", "C.punctata"),
+  c("A.pulcher", "R.hartii", "C.punctata"),
   length.out = nrow(no_predation))
 )
 # get rid of redundant NULL factor
