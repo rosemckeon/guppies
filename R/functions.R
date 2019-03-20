@@ -78,15 +78,91 @@ roses_set_ggtheme <- function(...){
 #' @title Rose's favourite unicodes
 #' @desc These are all tried and tested as pch vals. Unicode characters work really nicely as pch vals with alpha transparency as they are one solid vector layer - the whole icon will be the same transparency and and will have nice high res smooth edges.
 #' @param shorthand my nickname for the unicaode character
-#' @return hexidecimal form of the unicode
+#' @return hexidecimal form of the unicode, defaults to filled dot.
 #' @example roses_unicode("dot_open")
 #' @example par(pch = roses_unicaode("dot_filled"))
 roses_unicode <- function(shorthand){
-  if(shorthand == "dot_open")
-    code <- "25CB"
+  #set default
+  code <- "25CF" # dot_filled
 
   if(shorthand == "dot_filled")
     code <- "25CF"
 
+  if(shorthand == "dot_open")
+    code <- "25CB"
+
   return(-as.hexmode(code))
+}
+
+predict_density <- function(
+  x = density,
+  predator,
+  mod.object = fit_density
+){
+  predictions <- predict(
+    mod.object,
+    newdata = list(
+      Predator = rep(predator, length(x)),
+      Predator.number = x
+    ),
+    se = T
+  )
+  predictions <- data.frame(
+    Predator.number = x,
+    Spot.brightness = predictions$fit,
+    Upper = predictions$fit + 1.96*predictions$se.fit,
+    Lower = predictions$fit - 1.96*predictions$se.fit,
+    Predator = rep(predator, length(x))
+  )
+  return(predictions)
+}
+
+predict_substrate <- function(
+  x = density,
+  predator,
+  substrate,
+  mod.object = fit_substrate_density
+){
+  predictions <- predict(
+    mod.object,
+    newdata = list(
+      Substrate = rep(substrate, length(x)),
+      Predator = rep(predator, length(x)),
+      Predator.number = x
+    ),
+    se = T
+  )
+  predictions <- data.frame(
+    Predator.number = x,
+    Spot.brightness = predictions$fit,
+    Upper = predictions$fit + 1.96*predictions$se.fit,
+    Lower = predictions$fit - 1.96*predictions$se.fit,
+    Substrate = rep(substrate, length(x)),
+    Predator = rep(predator, length(x))
+  )
+  return(predictions)
+}
+
+# Smoothing function with different behaviour depending on the panel
+smooth_predation <- function(formula, data, ...){
+  smooth.call <- match.call()
+  if("PANEL" %in% colnames(data)){
+    panel <- mean(as.numeric(data[3]$PANEL))
+    if(panel < 3) {
+      # Asymptotic curves
+      smooth.call[[1]] <- quote(nls)
+      smooth.call$formula <- as.formula('y ~ a - b * exp(-c*x)')
+      smooth.call$start <- list(a = 20, b = 10, c = 0.0028)
+    } else if(panel == 3) {
+      # Sigmoidal / logistic curves
+      smooth.call[[1]] <- quote(nls)
+      smooth.call$formula <- as.formula('y ~ a / (1+exp( (b-x)/c) )')
+      smooth.call$start <- list(a = 15, b = -479, c = 858)
+    } else {
+      # Linear regression
+      smooth.call[[1]] <- quote(lm)
+    }
+  }
+  # Perform fit
+  eval.parent(smooth.call)
 }
