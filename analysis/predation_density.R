@@ -26,92 +26,41 @@ fit_density <- lm(
   Spot.brightness ~ Predator.number * Predator + I(Predator.number^2) * Predator,
   data = predation_density_end
 )
-#summary(fit_density)
-# very good R2
+# summary(fit_density)
+# #very good R2
 # fit_density1 <- update(
 #   fit_density, ~. -Predator.number:Predator
 # )
-#anova(fit_density, fit_density1)
-# removal not valid
+# anova(fit_density, fit_density1)
+# #removal not valid
 # fit_density1 <- update(
 #   fit_density, ~. -I(Predator.number^2):Predator
 # )
-#anova(fit_density, fit_density1)
-# removal not valid
+# anova(fit_density, fit_density1)
+# #removal not valid
 # fit_density1 <- update(
 #   fit_density, ~. -Predator
 # )
-#anova(fit_density, fit_density1)
-# removal not valid
+# anova(fit_density, fit_density1)
+# #removal not valid
 fit_density1 <- update(
   fit_density, ~. -Predator.number
 )
-anova(fit_density, fit_density1)
+# anova(fit_density, fit_density1)
 # removal valid
 fit_density <- fit_density1
 
 #summary(fit_density)
-# R2 increased :)
+# R2 increased :) 0.907
 
 # create vals to make predictions for
 density <- seq(0, 10, 0.1)
 
-# predict response for species 1
-predictions1 <- predict(
-  fit_density,
-  newdata = list(
-    Predator = rep("R.hartii", length(density)),
-    Predator.number = density
-  ),
-  se = T
-)
-predictions1 <- data.frame(
-  Predator.number = density,
-  Spot.brightness = predictions1$fit,
-  Upper = predictions1$fit + 1.96*predictions1$se.fit,
-  Lower = predictions1$fit - 1.96*predictions1$se.fit,
-  Predator = rep("R.hartii", length(density))
-)
-
-# predict response for species 2
-predictions2 <- predict(
-  fit_density,
-  newdata = list(
-    Predator = rep("A.pulcher", length(density)),
-    Predator.number = density
-  ),
-  se = T
-)
-predictions2 <- data.frame(
-  Predator.number = density,
-  Spot.brightness = predictions2$fit,
-  Upper = predictions2$fit + 1.96*predictions2$se.fit,
-  Lower = predictions2$fit - 1.96*predictions2$se.fit,
-  Predator = rep("A.pulcher", length(density))
-)
-
-# predict response for species 3
-predictions3 <- predict(
-  fit_density,
-  newdata = list(
-    Predator = rep("C.punctata", length(density)),
-    Predator.number = density
-  ),
-  se = T
-)
-predictions3 <- data.frame(
-  Predator.number = density,
-  Spot.brightness = predictions3$fit,
-  Upper = predictions3$fit + 1.96*predictions3$se.fit,
-  Lower = predictions3$fit - 1.96*predictions3$se.fit,
-  Predator = rep("C.punctata", length(density))
-)
-
 # prepare predictions for ggplot
 predictions <- bind_rows(
-  predictions1,
-  predictions2,
-  predictions3
+  predict_density(density, "R.hartii"),
+  predict_density(density, "A.pulcher"),
+  predict_density(density, "C.punctata")
 )
 #str(predictions)
 predictions$Predator <- factor(predictions$Predator)
