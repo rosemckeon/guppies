@@ -13,6 +13,29 @@ fit_density <- lm(
   Spot.brightness ~ Predator.number * Predator + I(Predator.number^2) * Predator,
   data = predation_density_end
 )
+summary(fit_density)
+# very good R2
+fit_density1 <- update(
+  fit_density, ~. -Predator.number:Predator
+)
+anova(fit_density, fit_density1)
+# removal not valid
+fit_density1 <- update(
+  fit_density, ~. -I(Predator.number^2):Predator
+)
+anova(fit_density, fit_density1)
+# removal not valid
+fit_density1 <- update(
+  fit_density, ~. -Predator
+)
+anova(fit_density, fit_density1)
+# removal not valid
+fit_density1 <- update(
+  fit_density, ~. -Predator.number
+)
+anova(fit_density, fit_density1)
+# removal valid
+fit_density <- fit_density1
 
 # create vals to make predictions for
 density <- seq(0, 10, 0.1)
