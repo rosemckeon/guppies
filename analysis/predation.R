@@ -98,7 +98,7 @@ fit_predation <- lm(
 #summary(fit_predation)
 #summary.aov(fit_predation)
 
-predation_stats <- data.frame(
+summary_predation <- data.frame(
   Predator = c(
     "None",
     "\\textit{Rivulus hartii}",

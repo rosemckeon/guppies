@@ -27,13 +27,6 @@ longtable: yes
 ```{r setup, include=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 source("analysis/setup.R")
 library(kableExtra)
-roses_set_ggtheme()
-# analysis objects
-library(Hmisc)
-source("analysis/wild.R")
-source("analysis/control.R")
-source("analysis/predation.R")
-source("analysis/predation_density.R")
 ```
 
 # Introduction
@@ -110,18 +103,18 @@ Spot brightness for the entire guppy population was recorded at the beginning, t
 
 # Results
 
-## Predator presence and predator species as a function of spot brightness:
+## Predator species
 
-As expected, predation imposed negative selection on the spot brightness of male guppies. Figure \ref{fig:predation} shows the results from all populations at the end of each experiment (Day > 1400). Predator species explained substantially more variability than what we would expect to see by chance (ANOVA, Df = 3, F = 3425, P < 0.001). Presence of *R. hartii* did not significantly impact spot brightness whereas presence of *A. pulcher* significantly reduced mean spot brightness by 4.82. Presence of *C. puntata* had the largest negative effect on spot brightness, reducing the mean by 9.39 (almost half). See table \ref{tab:predation_stats} for test statistics and coefficients from the model.
+As expected, predation imposed negative selection on the spot brightness of male guppies. Figure \ref{fig:predation} shows the results from all populations at the end of each experiment (Day > 1400). Predator species explained substantially more variability than what we would expect to see by chance (ANOVA, Df = 3, F = 3425, P < 0.001). Presence of *R. hartii* did not significantly impact spot brightness whereas presence of *A. pulcher* significantly reduced mean spot brightness by 4.82. Presence of *C. puntata* had the largest negative effect on spot brightness, reducing the mean by 9.39 (almost half). See table \ref{tab:predation_stats} for test statistics and coefficients from the model which explains 73% of the variation in spot brightness (R^2^ = 0.730).
 
-```{R predation2, echo=FALSE, dev='cairo_pdf', warning=FALSE, message=FALSE, fig.height=6, fig.cap="\\label{fig:predation}Predator species as a function of spot brightness: Data points represent individual male guppies from the end point of populations exposed to a minimum of 2 predators. Points are jittered around both X and Y values and are coloured according to spot brightness. Adjacent error bars show the mean with confidence intervals at 95%. Dotted grey violin plot outlines have widths relative to frequency counts of the data points. The grey horizontal line behind each plot shows the mean spot brightness of control populations where no predators were added. \\textit{R. hartii} N = 997, \\textit{A. pulcher} N = 886, \\textit{C. punctata} N = 849"}
+```{R predation1, echo=FALSE, dev='cairo_pdf', warning=FALSE, message=FALSE, fig.height=6, fig.cap="\\label{fig:predation}Predator species as a function of spot brightness: Data points represent individual male guppies from the end point of populations exposed to a minimum of 2 predators. Points are jittered around both X and Y values and are coloured according to spot brightness. Adjacent error bars show the mean with confidence intervals at 95%. Dotted grey violin plot outlines have widths relative to frequency counts of the data points. The grey horizontal line behind each plot shows the mean spot brightness of control populations where no predators were added. \\textit{R. hartii} N = 997, \\textit{A. pulcher} N = 886, \\textit{C. punctata} N = 849, R\\textsuperscript{2} = 0.730."}
 plot_predation
 ```
 
-```{R predation_stats, eval=FALSE, include=FALSE}
+```{R predation_stats, echo=FALSE}
 kable(
-  predation_stats, 
-  caption = "\\label{tab:predation_stats}linear model coefficients from single factor classification of predator species as a function of spot brightness.",
+  summary_predation, 
+  caption = "\\label{tab:predation_stats}linear model coefficients from single factor classification of predator species as a function of spot brightness (R\\textsuperscript{2} = 0.730).",
   booktabs = T,
   digits = 3,
   escape = F
@@ -136,79 +129,65 @@ kable(
       "95% Confidence" = 2, 
       " " = 2
     )
-)
+) %>% column_spec(1, width = "10em")
 ```
 
-## Predator density as a function of spot brightness
+## Predator density
+
+The effect of predator species on spot brightness was amplified as numbers of the predator increased. Figure \ref{fig:density} shows the negative relationship of predator number as a function of spot brightness for each species. This amplification is steeper relative to the size of the predator species effect (seen in figure \ref{fig:predation}). A quadratic term was added to the model to fit curvilinear predictions and the final model explains 91% of the variation in spot brightness (R^2^ = 0.907). Coefficients from the model can be found in table \ref{tab:density_stats}.
+
+
+```{R density, echo=FALSE, dev='cairo_pdf', warning=FALSE, message=FALSE, fig.height=4, fig.cap="\\label{fig:density}Predator number as a function of spot brightness: negative for all species. Data points represent individual male guppies from the end point of all populations. Points are jittered around both X and Y values and are coloured according to spot brightness. Black regression lines show the predictions from the model with confidence envelope at 95% marked in dotted lines around the fit. \\textit{R. hartii} N = 1350, \\textit{A. pulcher} N = 1241, \\textit{C. punctata} N = 1206, R\\textsuperscript{2} = 0.907"}
+plot_predation_density
+```
+
+
+```{R density_stats, echo=FALSE}
+kable(
+  summary_predation_density, 
+  caption = "\\label{tab:density_stats}Linear model coefficients including quadratic effect of predator number (model simplification via sequential f-tests can be seen in supporting digital information, R\\textsuperscript{2} = 0.907).",
+  booktabs = T,
+  digits = 3,
+  escape = F
+) %>% kable_styling(
+  latex_options = c("striped"),
+  full_width = T,
+  font_size = 8
+) %>%
+  add_header_above(
+    c(
+      " " = 2, 
+      "95% Confidence" = 2, 
+      " " = 2
+    )
+) %>% column_spec(1, width = "15em")
+```
+
+
+## Substrate
 
 
 
+## Time
 
 
-
-
-
-```{R control, dev='cairo_pdf', echo=FALSE, fig.cap="\\label{fig:control}Increase in male guppy spot brightness over time when populations were not exposed to predation (lifespan around 120 days). Each data point represents the spot brightness of one male guppy (points are jittered around both x and y values). Regression of these control populations show clear assymptotic growth patterns in male spot brightness."}
+```{R control, eval=FALSE, dev='cairo_pdf', echo=FALSE, fig.cap="\\label{fig:control}Increase in male guppy spot brightness over time when populations were not exposed to predation (lifespan around 120 days). Each data point represents the spot brightness of one male guppy (points are jittered around both x and y values). Regression of these control populations show clear assymptotic growth patterns in male spot brightness."}
 plot_control
 ```
 
-```{R control_factors, dev='cairo_pdf', echo=FALSE, fig.height=4, fig.cap="\\label{fig:control_factors}Effects of factors in guppy populations that were not exposed to predation on spot brightness after 1000 days. After 1000 days all populations had reached a natural plataeu in spot brightness (see figure \\ref{fig:control}). Records from this point onwards (to around 1500 days) show no difference in male spot brightness based on substrate or starting food level."}
-boxplot_control
-```
 
-
-```{R predation, dev='cairo_pdf', echo=FALSE, warning=FALSE, message=FALSE, fig.height=6, fig.cap="\\label{fig:predation_time}Comparison of changes in male guppy spot brightness over time when populations were exposed to equal levels of predation (5 predators) by 3 suspected predator species. Each data point represents the spot brightness of one male guppy (points are jittered around both x and y values). Regression of the populations with no predation and the one exposed to R. hartii show clear assymptotic growth patterns, while populations exposed to A. pulchens and C. punctata have Spot brightness controlled to varying degrees."}
+```{R predation_time, eval=FALSE, dev='cairo_pdf', echo=FALSE, warning=FALSE, message=FALSE, fig.height=6, fig.cap="\\label{fig:predation_time}Comparison of changes in male guppy spot brightness over time when populations were exposed to equal levels of predation (5 predators) by 3 suspected predator species. Each data point represents the spot brightness of one male guppy (points are jittered around both x and y values). Regression of the populations with no predation and the one exposed to R. hartii show clear assymptotic growth patterns, while populations exposed to A. pulchens and C. punctata have Spot brightness controlled to varying degrees."}
 #plot_predation
 ```
 
 
-```{R density, echo=FALSE, dev='cairo_pdf', warning=FALSE, message=FALSE, fig.height=4, fig.cap="\\label{fig:density}The effect of predator number on male spot brightness at the end of each predator treatment (around day 1500). Greater reductions in spot brightness were observed when predator density for each species was increased. Data points represent all male guppies from 3 populations living in different substrates. The dotted grey line is the mean spot brightness for the control populations (no predation) after the same amount of time."}
-#boxplot_predation_density
-```
+>Model simplification steps for all models along with the data analysed can be seen in supporting digital information [@guppies2019].  
 
-```{R density1, echo=FALSE, dev='cairo_pdf', warning=FALSE, message=FALSE, fig.height=6, fig.cap="\\label{fig:densityA}Predator A. pulchen density effect on spot brightness over time. Data points represent all male guppies from 3 independent populations living in different substrates. Coloured lines show the best fitting model for each predator density (see supporting digital material). The dotted grey lines represent the best fitting model for the control populations (no predation) over the same time span."}
-#plot_densityA
-```
-
-```{R density2, echo=FALSE, dev='cairo_pdf', warning=FALSE, message=FALSE, fig.height=6, fig.cap="\\label{fig:densityC}Predator C. punctata density effect on spot brightness over time. Data points represent all male guppies from 3 independent populations living in different substrates. Coloured lines show the best fitting model for each predator density (see supporting digital material). The dotted grey lines represent the best fitting model for the control populations (no predation) over the same time span."}
-#plot_densityC
-```
-
-```{R density10, echo=FALSE, dev='cairo_pdf', warning=FALSE, message=FALSE, fig.height=4, fig.cap="\\label{fig:density10}The effect of substrate observed at the end (around day 1500) of highest level predation treatments (10 predators per population)."}
-#boxplot_predation_density10
-```
-
-
-# How to cite
-
-## Figures 
-
-Cite figures like this: figure \ref{fig:control}. See the chunk options for how to add //labels to fig.cap in order for this to work.
+## Discussion
 
 ## References
 
 Cite references like this: [@Chaib2017] to put them inside round brackets, or do Author says [-@Chaib2017] to just put the year. The references will appear at the end of the document automatically containing only those from the bib file that are actually cited. For more advanced citation techniques, and how to add **nocite** references for a bibliography see the [RMarkdown citation guidelines](https://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html).
-
-
-## Testing
-
-For testing thet citation style references are included for:
-
-+ A book section (two authors): [@VanMourik1990]
-
-+ A book (one author): [@Wulf2015]
-
-+ A book (three authors): [@Gurevitch2006]
-
-+ A book (many authors): [@Lodish2016]
-
-+ A journal article (many authors): [@Preston2003]
-
-+ A journal article (one author): [@Geist1966]
-
-+ A webpage (one author): [@Chaib2017]
-
-+ Multiple citations: [@Wulf2015; @Preston2003]
 
 
 # References

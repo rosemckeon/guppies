@@ -36,9 +36,9 @@ control_predictions <- data.frame(
   X = rep(days, 3),
   Y = rep(predictions, 3),
   Predator.number = c(
-    rep(2, length(newx)),
-    rep(5, length(newx)),
-    rep(10, length(newx))
+    rep(2, length(days)),
+    rep(5, length(days)),
+    rep(10, length(days))
   )
 )
 
