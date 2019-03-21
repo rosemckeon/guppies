@@ -47,7 +47,8 @@ plot_control <- ggplot(
   control,
   aes(
     y = Spot.brightness,
-    x = Day
+    x = Day,
+    colour = Spot.brightness
   )
 ) + ylim(
   0, 21 # has to include jitter range
@@ -72,6 +73,34 @@ plot_control <- ggplot(
   colour = "black"
 ) + ylab(
   "Male spot brightness"
+) + theme(
+  legend.position = "none"
+)
+
+
+summary_control <- data.frame(
+  Term = c(
+    "Asym",
+    "R0",
+    "lrc"
+  ),
+  B = c(
+    "19.490",
+    "9.810",
+    "0.003"
+  ),
+  Lower = as.data.frame(confint(fit_control)) %>% pull(1),
+  Upper = as.data.frame(confint(fit_control)) %>% pull(2),
+  t = c(
+    "514.2",
+    "140.0",
+    "64.3"
+  ),
+  P = c(
+    "\\textless\\hspace{1em}0.001",
+    "\\textless\\hspace{1em}0.001",
+    "\\textless\\hspace{1em}0.001"
+  )
 )
 
 
