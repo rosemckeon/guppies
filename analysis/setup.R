@@ -16,6 +16,7 @@ source("analysis/wild.R")
 source("analysis/control.R")
 source("analysis/predation.R")
 source("analysis/predation_density.R")
+source("analysis/substrate.R")
 # global options
 options(knitr.table.format = "latex")
 options(kableExtra.latex.load_packages = FALSE)
