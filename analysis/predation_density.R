@@ -131,10 +131,10 @@ summary_predation_density <- data.frame(
   t = tidy(summary(fit_density)) %>% pull(statistic),
   P = c(
     "\\textless\\hspace{1em}0.001",
-    "\\textgreater\\hspace{1em}0.05",
+    "0.208",
     "\\textless\\hspace{1em}0.001",
-    "\\textgreater\\hspace{1em}0.05",
-    "\\textgreater\\hspace{1em}0.05",
+    "0.348",
+    "0.623",
     "\\textless\\hspace{1em}0.001",
     "\\textless\\hspace{1em}0.001",
     "\\textless\\hspace{1em}0.001",

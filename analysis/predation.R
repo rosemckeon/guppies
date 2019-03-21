@@ -111,7 +111,7 @@ summary_predation <- data.frame(
   t = tidy(summary(fit_predation)) %>% pull(statistic),
   P = c(
     "\\textless\\hspace{1em}0.001",
-    "\\textgreater\\hspace{1em}0.05",
+    "0.095",
     rep("\\textless\\hspace{1em}0.001", 2)
   )
 )
