@@ -9,7 +9,7 @@
 #'   \item{Spot.brightness}{Number: scale from 1-20 (dull to bright)}
 #'   \item{Day}{Number: Day of experiment}
 #'   \item{Substrate}{Factor: substrate in the tank}
-#'   \item{Predator}{Factor: predator species added to tank}
+#'   \item{Predator}{Factor: predator treatment for tank}
 #'   \item{Predator.number}{Number: predators added to tank}
 #' }
 "guppies"

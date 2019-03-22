@@ -2,29 +2,32 @@
 title: "How the Guppy Got his Spots"
 author: "Rose McKeon"
 date: "09/03/2019"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+This package is complimentary to a report which analyses data from simulated guppy experiments, collected via the software Simbio.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Install and load data
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+> devtools::install_github("rozeykex/guppies")
+> library(guppies)
+> data(guppies)
 ```
+# Model simplification
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+The analysis files are stored in `/analysis` (these are ignored from the package build). There are various model simplifications carried out in `/analysis/predator_density.R` and `/analysis/substrate.R` in particular.
+
+# Package functions
+Man pages included for everything except `smooth_predation` which wasn't used in the final analysis.
+
+- predict_density()
+- predict_substrate()
+- rgba()
+- roses_unicode()
+- roses_set_ggtheme()
+- smooth_predation()
